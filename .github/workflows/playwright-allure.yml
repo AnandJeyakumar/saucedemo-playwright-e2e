@@ -1,17 +1,14 @@
-name: Playwright + Allure
+name: Playwright + Allure (docker-fast)
 
 on:
   workflow_dispatch:
     inputs:
       browser:
-        description: "Select Playwright project (browser)"
+        description: "Playwright project"
         type: choice
         required: true
         default: chromium
-        options:
-          - chromium
-          - firefox
-          - webkit
+        options: [chromium, firefox, webkit]
 
 permissions:
   contents: read
@@ -24,44 +21,42 @@ concurrency:
 
 jobs:
   tests:
-    name: Run Playwright on ${{ inputs.browser }}
     runs-on: ubuntu-latest
-
+    container:
+      image: mcr.microsoft.com/playwright:v1.46.0-jammy 
     env:
-      # App env (secrets recommended)
-      BASE_URL: ${{ secrets.BASE_URL || 'https://www.saucedemo.com' }}
+      BASE_URL: ${{ secrets.BASE_URL }}
       STD_USER: ${{ secrets.STD_USER }}
       STD_PASS: ${{ secrets.STD_PASS }}
 
     steps:
-      - name: Checkout repo
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node cache
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
 
       - name: Install deps
         run: npm ci
 
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+      # Browsers & OS deps are already in the image → no install step
 
-      - name: Run tests (project=${{ inputs.browser }}, retries=2)
+      - name: Run tests
         run: npx playwright test --project=${{ inputs.browser }} --retries=2
 
-      # Keep Playwright's own HTML report too
       - name: Upload Playwright HTML report (30 days)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-html-report-${{ inputs.browser }}
+          name: playwright-report-${{ inputs.browser }}
           path: playwright-report
-          if-no-files-found: ignore
           retention-days: 30
+          if-no-files-found: ignore
 
-      # Generate Allure report from allure-results/
       - name: Generate Allure report
         if: always()
         uses: simple-elf/allure-report-action@v1.7
@@ -70,24 +65,13 @@ jobs:
           allure_report: allure-report
           keep_reports: 20
 
-      # Upload Allure report as regular artifact (optional, 30 days)
-      - name: Upload Allure report artifact (30 days)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-report-${{ inputs.browser }}
-          path: allure-report
-          retention-days: 30
-
-      # Hand off the Allure static site to GitHub Pages
-      - name: Upload artifact for Pages
+      - name: Upload Pages artifact (Allure)
         if: always()
         uses: actions/upload-pages-artifact@v3
         with:
           path: allure-report
 
   deploy-pages:
-    name: Publish Allure to GitHub Pages
     needs: tests
     if: always()
     runs-on: ubuntu-latest
@@ -95,6 +79,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to Pages
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

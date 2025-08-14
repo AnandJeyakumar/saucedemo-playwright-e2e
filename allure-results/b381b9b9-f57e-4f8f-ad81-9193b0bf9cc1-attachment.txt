@@ -1,0 +1,11 @@
+Inside addRandomItemsWithSummary 
+Inside addRandomItems
+Inside addRandomItemsWithSummary  [
+  'Sauce Labs Bolt T-Shirt',
+  'Sauce Labs Fleece Jacket',
+  'Sauce Labs Backpack'
+] [ 15.99, 49.99, 29.99 ] 95.97
+Inside validatePriceDetails
+The sub , tax , total is  Item total: $95.97 Tax: $7.68 Total: $103.65
+The UI Summary values are  95.97 7.68 103.65
+The  Expected calculated values are  95.97 7.68 103.65

@@ -11,10 +11,7 @@ test.describe('Sauce Lab -  Checkout', () => {
 
     await test.step('Login', async () => {
       await login.goto();
-      if (!process.env.STD_USER || !process.env.STD_PASS) {
-        throw new Error('Missing STD_USER/STD_PASS env vars');
-      }
-      await login.login(process.env.STD_USER, process.env.STD_PASS);
+      await login.login(process.env.STD_USER || "provide your username", process.env.STD_PASS || "provide your password");
     });
 
     const { pickedNames, prices, total } = await test.step('Add 3 random items', async () => {

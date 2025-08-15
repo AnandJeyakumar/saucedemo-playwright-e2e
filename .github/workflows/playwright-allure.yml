@@ -7,7 +7,7 @@ on:
         description: "Browser(s) to execute Playwright tests"
         type: choice
         required: true
-        default: all
+        default: chromium
         options: [all, chromium, firefox, webkit]
 
 permissions:
@@ -25,6 +25,7 @@ jobs:
     container:
       image: mcr.microsoft.com/playwright:v1.54.2-jammy
     env:
+      HOME: /root 
       BASE_URL: ${{ secrets.BASE_URL }}
       STD_USER: ${{ secrets.STD_USER }}
       STD_PASS: ${{ secrets.STD_PASS }}

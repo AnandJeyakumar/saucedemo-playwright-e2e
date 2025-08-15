@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
     inputs:
       browser:
-        description: "Playwright project to run (or 'all' for all browsers)"
+        description: "Browser(s) to execute Playwright tests"
         type: choice
         required: true
-        default: all
+        default: chromium
         options: [all, chromium, firefox, webkit]
 
 permissions:

@@ -46,20 +46,6 @@ test.describe('Sauce Lab -  Checkout', () => {
     await test.step('Assert Success', async () => {
       await complete.assertSuccess();
     });
-
-
-    // await login.goto();
-    // await login.login(process.env.STD_USER || '', process.env.STD_PASS  || '');
-    // const { pickedNames, prices, total } = await inventory.addRandomItemsWithSummary(3);
-    // await inventory.goToCart();
-    // await checkOutAssertions.assertProductItems(pickedNames , prices);
-    // await cart.checkout();
-    // await info.fillAndContinue('Lean', 'Candidate', '00000');
-    // Overview checks
-    // await checkOutAssertions.assertProductItems(pickedNames , prices);
-    // await overview.validatePriceDetails(total);
-    // await overview.finish();
-    // await complete.assertSuccess();
     
   });
 });

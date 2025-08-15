@@ -1,0 +1,7 @@
+Inside addRandomItemsWithSummary 
+Inside addRandomItems
+Inside addRandomItemsWithSummary  [ 'Sauce Labs Onesie', 'Sauce Labs Bike Light', 'Sauce Labs Backpack' ] [ 7.99, 9.99, 29.99 ] 47.97
+Inside validatePriceDetails
+The sub , tax , total are ==>  Item total: $47.97 Tax: $3.84 Total: $51.81
+The UI Summary values are  47.97 3.84 51.81
+The  Expected calculated values are  47.97 3.84 51.81

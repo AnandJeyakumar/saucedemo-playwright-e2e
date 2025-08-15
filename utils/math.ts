@@ -15,23 +15,3 @@ export function calculateTax(subtotal: number, rate: number = 0.08): number {
   const roundedTax = roundToTwoDecimals(taxAmount);
   return roundedTax;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// export const roundToTwoDecimals = (n: number) => Number(n.toFixed(2));
-// export function calculateTax(subtotal: number, rate: number = 0.08): number {
-//   const taxAmount = subtotal * rate;
-//   const roundedTax = roundToTwoDecimals(taxAmount);
-//   return roundedTax;
-// }

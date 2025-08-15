@@ -1,5 +1,5 @@
 import { Page, Locator, expect } from '@playwright/test';
-
+import { BUTTON_TEXT } from '../constants/buttonText';
 export type Item = { name: string; price: number };
 
 export class InventoryPage {
@@ -40,8 +40,8 @@ export class InventoryPage {
     for (const i of indices) {
       const details = await this.readRow(i);  
       const row = this.items.nth(i);
-      await row.getByRole('button', { name: "Add to cart" }).click();
-      await expect(row.getByRole('button', {name: "Remove"})).toBeVisible();
+      await row.getByRole('button', { name: BUTTON_TEXT.addToCart }).click();
+      await expect(row.getByRole('button', {name: BUTTON_TEXT.remove})).toBeVisible();
       picked.push(details);
     }
     await expect(this.cartLink.locator(this.itemCountInCart) , "Validation of no.of Items in Cart").toHaveText(String(n));

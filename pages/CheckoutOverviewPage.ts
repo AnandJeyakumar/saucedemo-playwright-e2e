@@ -19,30 +19,11 @@ export class CheckoutOverviewPage {
 
   }
 
-  async getNames(): Promise<string[]> {
-    const els = this.page.locator('.cart_item .inventory_item_name');
-    const count = await els.count();
-    const result: string[] = [];
-    for (let i = 0; i < count; i++) result.push((await els.nth(i).textContent())!.trim());
-    return result;
-  }
-
-  async getPrices(): Promise<number[]> {
-    const els = this.page.locator('.cart_item .inventory_item_price');
-    const count = await els.count();
-    const result: number[] = [];
-    for (let i = 0; i < count; i++) {
-      const t = (await els.nth(i).textContent())!.trim();
-      result.push(parseFloat(t.replace('$', '')));
-    }
-    return result;
-  }
-
   async getSummary() {
     const sub = (await this.itemTotal.textContent())!;
     const tax = (await this.tax.textContent())!;
     const total = (await this.total.textContent())!;
-    console.log("The sub , tax , total is ", sub , tax , total )
+    console.log("The sub , tax , total are ==> ", sub , tax , total )
     return extractSummaryAmounts(sub, tax, total);
   }
 

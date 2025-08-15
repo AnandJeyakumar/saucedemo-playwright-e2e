@@ -1,4 +1,4 @@
-name: Playwright + Allure (docker-fast)
+name: Playwright + Allure Using Docker Image
 
 on:
   workflow_dispatch:
@@ -43,7 +43,6 @@ jobs:
       - name: Install deps
         run: npm ci
 
-      # Browsers & OS deps are already in the image → no install step
 
       - name: Run tests
         run: npx playwright test --project=${{ inputs.browser }} --retries=2

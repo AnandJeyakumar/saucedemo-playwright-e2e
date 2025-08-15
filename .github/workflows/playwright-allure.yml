@@ -7,7 +7,7 @@ on:
         description: "Browser(s) to execute Playwright tests"
         type: choice
         required: true
-        default: chromium
+        default: all
         options: [all, chromium, firefox, webkit]
 
 permissions:
@@ -24,12 +24,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.54.2-jammy
-
-    strategy:
-      fail-fast: false
-      matrix:
-        browser: ${{ fromJSON( inputs.browser == 'all' && '["chromium","firefox","webkit"]' || format('["{0}"]', inputs.browser) ) }}
-
     env:
       BASE_URL: ${{ secrets.BASE_URL }}
       STD_USER: ${{ secrets.STD_USER }}
@@ -49,41 +43,25 @@ jobs:
       - name: Install deps
         run: npm ci
 
-      - name: Run tests
-        run: npx playwright test --project=${{ matrix.browser }} --retries=2
+      - name: Run tests (ALL browsers in parallel)
+        if: ${{ inputs.browser == 'all' }}
+        run: npx playwright test --retries=2
+
+      # Else run only the selected project
+      - name: Run tests (single browser)
+        if: ${{ inputs.browser != 'all' }}
+        run: npx playwright test --project=${{ inputs.browser }} --retries=2
 
       - name: Upload Playwright HTML report (30 days)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-${{ matrix.browser }}
+          name: playwright-report
           path: playwright-report
           retention-days: 30
           if-no-files-found: ignore
 
-      - name: Upload Allure results (raw)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-results-${{ matrix.browser }}
-          path: allure-results
-          retention-days: 30
-          if-no-files-found: ignore
-
-  allure-report:
-    needs: tests
-    if: always()
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Download Allure results (all browsers)
-        uses: actions/download-artifact@v4
-        with:
-          pattern: allure-results-*
-          path: allure-results
-          merge-multiple: true
-
-      - name: Generate Allure report (merged)
+      - name: Generate Allure report
         if: always()
         uses: simple-elf/allure-report-action@v1.7
         with:
@@ -98,7 +76,7 @@ jobs:
           path: allure-report
 
   deploy-pages:
-    needs: allure-report
+    needs: tests
     if: always()
     runs-on: ubuntu-latest
     environment:
